@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="TCPServer (console, --nogui)" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.chatapp.server.TCPServer" />
+    <module name="tcp-server" />
+    <option name="PROGRAM_PARAMETERS" value="--nogui" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="TCPClient 3" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.chatapp.client.TCPClient" />
+    <module name="tcp-client" />
+    <option name="PROGRAM_PARAMETERS" value="localhost 3000" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

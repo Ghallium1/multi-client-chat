@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Demo (server + 3 clients)" type="CompoundRunConfigurationType">
+    <toRun name="TCPServer" type="Application" />
+    <toRun name="TCPClient 1" type="Application" />
+    <toRun name="TCPClient 2" type="Application" />
+    <toRun name="TCPClient 3" type="Application" />
+    <method v="2" />
+  </configuration>
+</component>
