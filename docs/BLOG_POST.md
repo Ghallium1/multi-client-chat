@@ -2,16 +2,16 @@
 title: "Building a Multi-Client Chat in Java: Raw TCP Sockets, Virtual Threads and JavaFX"
 published: false
 tags: java, networking, javafx, concurrency
-cover_image: (upload docs/images/screenshot-chat.png)
+cover_image: https://raw.githubusercontent.com/Ghallium1/multi-client-chat/main/docs/images/screenshot-chat.png
 ---
 
 # Building a Multi-Client Chat in Java: Raw TCP Sockets, Virtual Threads and JavaFX
 
 *How I built a group chat from scratch on top of `java.net.Socket`, why I chose virtual threads, and the problems I ran into along the way.*
 
-> 🔗 **Source code:** [GitHub repository](https://github.com/Ghallium1/multi-client-chat) · 🎥 **Demo:** [3-minute video](YOUR_VIDEO_LINK)
+> 🔗 **Source code:** [github.com/Ghallium1/multi-client-chat](https://github.com/Ghallium1/multi-client-chat) · 📦 **Runnable JARs:** [v1.0.0 release](https://github.com/Ghallium1/multi-client-chat/releases/tag/v1.0.0)
 
-![The finished app: server on the left, clients on the right](YOUR_SCREENSHOT_LINK)
+![The chat client: your messages on the right, others on the left, the allUsers reply in the middle](https://raw.githubusercontent.com/Ghallium1/multi-client-chat/main/docs/images/screenshot-chat.png)
 
 ---
 
@@ -67,7 +67,7 @@ public final class ConsoleServerView implements ServerListener {
 
 `java -jar TCPServer.jar --nogui` runs the exact same `ChatServer` with console output. No model code changed, and that was the goal.
 
-![Class diagram](YOUR_CLASS_DIAGRAM_LINK)
+![Class diagram: model, view and controller packages of the server and client](https://raw.githubusercontent.com/Ghallium1/multi-client-chat/main/docs/images/class-diagram.png)
 
 ---
 
@@ -101,6 +101,10 @@ static String escape(String value) {
 ```
 
 The complete protocol fits in one enum: `HELLO`, `MESSAGE` and `BYE` from client to server, and `WELCOME`, `REJECTED`, `CHAT`, `INFO`, `USERS` and `ERROR` back. Being human-readable pays off: you can debug the server with nothing but `telnet localhost 3000`.
+
+Here is the full flow: joining, a broadcast, `allUsers`, and leaving.
+
+![Sequence diagram: join, broadcast, allUsers and leave](https://raw.githubusercontent.com/Ghallium1/multi-client-chat/main/docs/images/sequence-diagram.png)
 
 **Why not Java serialization (`ObjectOutputStream`)?** It ties both ends to Java and to identical class versions. It is also a well-known security risk, because deserializing untrusted network data has caused many real vulnerabilities. Plain text has neither problem.
 
@@ -138,6 +142,10 @@ while (!socket.isClosed()) {
 ```
 
 Naming the threads (`client-1`, `client-2`, …) is a small thing that makes thread dumps and debugger views much easier to read.
+
+On the server window, each connected user gets a random color in the live list, and the activity log shows every step:
+
+![Server window: colored list of connected users and the activity log](https://raw.githubusercontent.com/Ghallium1/multi-client-chat/main/docs/images/screenshot-server.png)
 
 ---
 
@@ -201,6 +209,10 @@ if (sender.isReadOnly()) {
 }
 ```
 
+From the guest's side, it looks like this:
+
+![A read-only guest: yellow READ-ONLY MODE banner and a refused message](https://raw.githubusercontent.com/Ghallium1/multi-client-chat/main/docs/images/screenshot-readonly.png)
+
 The same principle applies to everything that matters. The **server** stamps the time (so all clients agree), validates and de-duplicates usernames, and interprets `allUsers`, so the reply can go only to the sender:
 
 ```java
@@ -221,7 +233,9 @@ The IP and port are read from a `.properties` file at startup, with a simple ove
 2. a `server.properties` next to the JAR (or `-Dchat.config=path`),
 3. for the client, command-line arguments: `java -jar TCPClient.jar 192.168.1.20 3000`.
 
-Moving the server to another port is a one-line text edit and a restart.
+Moving the server to another port is a one-line text edit and a restart. Clients on other machines on the same network simply pass the server's IP address:
+
+![Deployment diagram: one server node and several client nodes connected over TCP/IP](https://raw.githubusercontent.com/Ghallium1/multi-client-chat/main/docs/images/deployment-diagram.png)
 
 ---
 
