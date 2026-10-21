@@ -1,0 +1,192 @@
+/* ------------------------------------------------------------------ Chat Server stylesheet */
+
+.root {
+    -accent: #4f46e5;
+    -accent-dark: #4338ca;
+    -danger: #dc2626;
+    -danger-dark: #b91c1c;
+    -surface: #ffffff;
+    -background: #f1f5f9;
+    -border: #e2e8f0;
+    -text: #0f172a;
+    -muted: #64748b;
+
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -fx-font-size: 13px;
+    -fx-text-fill: -text;
+}
+
+.server-root {
+    -fx-background-color: -background;
+}
+
+/* ---------------------------------------------------------------------------------- header */
+
+.header {
+    -fx-background-color: linear-gradient(to right, #1e1b4b, #4338ca);
+    -fx-padding: 18 24 18 24;
+}
+
+.title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.subtitle {
+    -fx-text-fill: #c7d2fe;
+    -fx-font-size: 12px;
+}
+
+.status-pill {
+    -fx-background-color: rgba(255, 255, 255, 0.14);
+    -fx-background-radius: 999;
+    -fx-padding: 6 14 6 12;
+    -fx-alignment: center;
+}
+
+.status-label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.status-dot.online {
+    -fx-fill: #22c55e;
+    -fx-effect: dropshadow(gaussian, #22c55e, 8, 0.4, 0, 0);
+}
+
+.status-dot.offline {
+    -fx-fill: #f87171;
+}
+
+/* --------------------------------------------------------------------------------- buttons */
+
+.button {
+    -fx-background-radius: 8;
+    -fx-padding: 8 18 8 18;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-text-fill: white;
+}
+
+.primary-button {
+    -fx-background-color: #22c55e;
+}
+
+.primary-button:hover {
+    -fx-background-color: #16a34a;
+}
+
+.danger-button {
+    -fx-background-color: -danger;
+}
+
+.danger-button:hover {
+    -fx-background-color: -danger-dark;
+}
+
+/* ---------------------------------------------------------------------------------- panels */
+
+.panel {
+    -fx-background-color: -surface;
+    -fx-background-radius: 12;
+    -fx-border-color: -border;
+    -fx-border-radius: 12;
+    -fx-padding: 14;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.06), 12, 0, 0, 2);
+}
+
+.panel-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -text;
+}
+
+.list-view {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-border-width: 0;
+}
+
+.list-view:focused {
+    -fx-background-color: transparent;
+}
+
+.list-view .placeholder .label {
+    -fx-text-fill: -muted;
+}
+
+/* ------------------------------------------------------------------------------ user list */
+
+.user-cell {
+    -fx-background-radius: 8;
+    -fx-background-insets: 2 0 2 0;
+    -fx-padding: 9 12 9 12;
+    -fx-graphic-text-gap: 10;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+}
+
+.user-cell:empty {
+    -fx-background-color: transparent;
+}
+
+.user-cell:selected {
+    -fx-border-color: -accent;
+    -fx-border-radius: 8;
+    -fx-border-insets: 2 0 2 0;
+    -fx-text-fill: #1e293b;
+}
+
+/* -------------------------------------------------------------------------------- log list */
+
+.log-list .list-cell {
+    -fx-font-family: "Cascadia Mono", "Consolas", "Menlo", monospace;
+    -fx-font-size: 12px;
+    -fx-padding: 5 8 5 8;
+    -fx-background-color: transparent;
+    -fx-text-fill: #334155;
+}
+
+.log-list .list-cell:filled:hover {
+    -fx-background-color: #f8fafc;
+}
+
+.log-list .list-cell:selected {
+    -fx-background-color: #eef2ff;
+}
+
+.log-list .list-cell.log-system {
+    -fx-text-fill: -accent;
+    -fx-font-weight: bold;
+}
+
+.log-list .list-cell.log-connection {
+    -fx-text-fill: #15803d;
+}
+
+.log-list .list-cell.log-message {
+    -fx-text-fill: #1e293b;
+}
+
+.log-list .list-cell.log-warning {
+    -fx-text-fill: -danger;
+}
+
+/* ------------------------------------------------------------------------------ scrollbars */
+
+.scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #cbd5e1;
+    -fx-background-radius: 6;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-padding: 0;
+    -fx-shape: "";
+}
