@@ -1,0 +1,203 @@
+@startuml class-diagram
+!pragma layout smetana
+title Multi-Client Chat — Class Diagram
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName Segoe UI
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #4F46E5
+  ArrowColor #334155
+}
+skinparam package {
+  BackgroundColor #F8FAFC
+  BorderColor #94A3B8
+}
+left to right direction
+
+package "chat-common" {
+  package "protocol" {
+    enum PacketType {
+      HELLO
+      MESSAGE
+      BYE
+      WELCOME
+      REJECTED
+      CHAT
+      INFO
+      USERS
+      ERROR
+    }
+    class Packet <<record>> {
+      +type : PacketType
+      +fields : List<String>
+      +{static} of(type, fields...) : Packet
+      +field(index) : String
+    }
+    class Protocol <<utility>> {
+      +{static} encode(Packet) : String
+      +{static} decode(String) : Packet
+    }
+    enum ChatCommand {
+      ALL_USERS
+      END
+      BYE
+      +{static} parse(String) : Optional<ChatCommand>
+      +isDisconnect() : boolean
+    }
+    class ChatMessage <<record>> {
+      +time : String
+      +sender : String
+      +text : String
+      +toPacket() : Packet
+      +format() : String
+    }
+    class ProtocolException
+  }
+  package "config" {
+    class NetworkConfig <<record>> {
+      +host : String
+      +port : int
+      +source : String
+      +{static} load(fileName) : NetworkConfig
+      +{static} parsePort(String) : int
+    }
+  }
+}
+
+package "TCPServer" {
+  class TCPServer <<main>> {
+    +{static} main(args)
+  }
+  class ServerApp <<JavaFX Application>>
+  package "server.model" {
+    class ChatServer {
+      -registry : ClientRegistry
+      -clientThreads : ExecutorService <<virtual>>
+      +start()
+      +stop()
+      +isRunning() : boolean
+      +activeUsers() : List<String>
+      ~join(ClientHandler, name) : boolean
+      ~handleMessage(ClientHandler, text) : boolean
+      ~clientFinished(ClientHandler)
+      -broadcast(Packet)
+    }
+    class ClientHandler <<Runnable>> {
+      -socket : Socket
+      -username : String
+      -readOnly : boolean
+      +run()
+      ~send(Packet)
+      ~close()
+    }
+    class ClientRegistry {
+      ~register(ClientHandler) : boolean
+      ~unregister(ClientHandler) : boolean
+      ~snapshot() : List<ClientHandler>
+      ~usernames() : List<String>
+    }
+    interface ServerListener {
+      +onLog(LogType, String)
+      +onClientConnected(String, boolean)
+      +onClientDisconnected(String)
+    }
+    enum LogType {
+      SYSTEM
+      CONNECTION
+      MESSAGE
+      WARNING
+    }
+  }
+  package "server.controller" {
+    class ServerController
+  }
+  package "server.view" {
+    class ServerView {
+      +appendLog(LogType, String)
+      +addUser(String, boolean)
+      +removeUser(String)
+      +showRunning(boolean)
+    }
+    class ConsoleServerView
+  }
+}
+
+package "TCPClient" {
+  class TCPClient <<main>> {
+    +{static} main(args)
+  }
+  class ClientApp <<JavaFX Application>>
+  package "client.model" {
+    class ChatClient {
+      -socket : Socket
+      -username : String
+      -readOnly : boolean
+      +connect(username)
+      +send(text)
+      +disconnect()
+      +isConnected() : boolean
+    }
+    interface ClientListener {
+      +onWelcome(String, boolean)
+      +onRejected(String)
+      +onChatMessage(ChatMessage)
+      +onInfo(String, String)
+      +onUserList(List<String>)
+      +onError(String)
+      +onDisconnected(String)
+    }
+    class ClientConfig <<utility>> {
+      +{static} resolve(args) : NetworkConfig
+    }
+  }
+  package "client.controller" {
+    class ClientController
+  }
+  package "client.view" {
+    class LoginView
+    class ChatView {
+      +addEntry(ChatEntry)
+      +setOnline(boolean)
+      +setReadOnly(boolean)
+    }
+    class MessageCell
+    class ChatEntry <<record>>
+  }
+}
+
+Packet --> PacketType
+Protocol ..> Packet
+ProtocolException <.. Protocol : throws
+ChatMessage ..> Packet
+
+TCPServer ..> ServerApp : launches
+TCPServer ..> ConsoleServerView : --nogui
+ServerApp ..> ServerController : creates
+ServerController ..|> ServerListener
+ConsoleServerView ..|> ServerListener
+ServerController --> ChatServer
+ServerController --> ServerView
+ChatServer --> ServerListener : notifies
+ChatServer *-- ClientRegistry
+ClientRegistry o-- "0..*" ClientHandler
+ClientHandler --> ChatServer
+ChatServer ..> Protocol
+ChatServer ..> ChatCommand
+ChatServer ..> NetworkConfig
+ServerListener ..> LogType
+
+TCPClient ..> ClientApp : launches
+ClientApp ..> ClientController : creates
+ClientController ..|> ClientListener
+ClientController --> ChatClient
+ClientController --> LoginView
+ClientController --> ChatView
+ChatView ..> MessageCell
+MessageCell ..> ChatEntry
+ChatClient --> ClientListener : notifies
+ChatClient ..> Protocol
+ChatClient ..> ChatCommand
+ClientConfig ..> NetworkConfig
+@enduml
